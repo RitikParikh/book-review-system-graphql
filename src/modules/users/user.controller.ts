@@ -9,7 +9,7 @@ import { User } from '@prisma/client';
 
 const TOKEN_EXPIRATION = parseInt(process.env.TOKEN_EXPIRATION || "24");
 
-export const registerUser = async (_: any, data: RegisterUserArgs) => {
+export const register = async (_: any, data: RegisterUserArgs) => {
   try {
     await registerUserDto.validate(data, { abortEarly: false });
     const userExist = await userService.findUserByEmailWithoutPassword(data.email);
@@ -27,7 +27,7 @@ export const registerUser = async (_: any, data: RegisterUserArgs) => {
 };
 
 
-export const loginUser = async (_: any, data: UserLogin) => {
+export const login = async (_: any, data: UserLogin) => {
   try {
     await loginUserDto.validate(data, { abortEarly: false });
     const userDetails  = await validateUser(data);
