@@ -20,6 +20,7 @@ To get started with the project, follow these steps:
     npx prisma migrate dev
 
 4. Start the development server:
+    ```bash
     npm run dev
 
 # Technologies Used
