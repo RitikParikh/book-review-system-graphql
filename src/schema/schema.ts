@@ -1,8 +1,11 @@
 import { gql } from 'apollo-server';
-
 const typeDefs = gql`
   type Query {
     healthCheck: String
+  }
+
+  type Mutation {
+    registerUser(username: String!, email: String!, password: String!): UserWithoutPassword
   }
 
   type User {
@@ -10,6 +13,15 @@ const typeDefs = gql`
     email: String!
     username: String
     password: String
+    createdAt: String
+    updatedAt: String
+    reviews: [Review!]
+  }
+
+  type UserWithoutPassword {
+    id: ID!
+    email: String!
+    username: String
     createdAt: String
     updatedAt: String
     reviews: [Review!]
