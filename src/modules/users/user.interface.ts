@@ -11,3 +11,8 @@ export interface UserWithoutPasswordSchmas {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface UserLogin {
+    email: string;
+    password : string;
+}

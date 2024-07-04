@@ -1,11 +1,12 @@
-import * as userResolver from "../modules/users/user.controller";
+import {loginUser, registerUser} from "../modules/users/user.controller";
 
 const resolvers = {
   Query: {
     healthCheck: () => 'Server is up and running!',
   },
   Mutation: {
-    ...userResolver
+    registerUser,
+    loginUser
   },
   User: {
   
