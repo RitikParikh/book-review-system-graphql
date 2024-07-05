@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "test": "ts-node ./tests/helpers/setup-tests.ts && jest --watch --verbose",
+    "test": "jest --config jest.config.ts --debug",
     "format": "prettier --ignore-path ./.cli.prettierignore --write ./**/*.{js,json,ts}",
     "start": "node dist/index.js",
     "dev": "nodemon --watch src --exec ts-node src/index.ts"
