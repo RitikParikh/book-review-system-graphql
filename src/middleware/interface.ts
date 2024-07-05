@@ -5,5 +5,6 @@ export interface Context {
     req: IncomingMessage;
     prisma: PrismaClient;
     user?: any;
+    token?: string | null;
   }
   

@@ -3,15 +3,22 @@ import { ApolloServer, AuthenticationError } from 'apollo-server';
 import typeDefs from './schema/schema';
 import resolvers from './resolvers';
 import prisma from './connection';
-import { authMiddleware } from './middleware/authMiddleware';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { authDirectiveTransformer } from './directives/authDirective';
 dotenv.config();
 
+let schema = makeExecutableSchema({ 
+  typeDefs, 
+  resolvers
+});
+schema = authDirectiveTransformer(schema, 'auth');
+
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  // typeDefs,
+  // resolvers,
+  schema,
   context: async ({ req }) => {
-    const context = { req, prisma }; 
-    // await authMiddleware(context);
+    const context = { req, prisma };
     return context;
   },
   formatError: (error) => {

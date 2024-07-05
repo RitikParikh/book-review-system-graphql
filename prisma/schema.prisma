@@ -20,6 +20,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reviews   Review[]
+  userToken   UserToken[]
 }
 
 model Book {
@@ -46,4 +47,15 @@ model Review {
   @@unique([userId, bookId])
   user      User     @relation(fields: [userId], references: [id])
   book      Book     @relation(fields: [bookId], references: [id])
+}
+
+
+model UserToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  refreshToken    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
 }

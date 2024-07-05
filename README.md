@@ -34,3 +34,6 @@ Jest
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+Need to remember send headers for middleware authentication --> Authorization : Bearer <Token>

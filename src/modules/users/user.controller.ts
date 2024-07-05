@@ -1,13 +1,15 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { RegisterUserArgs, UserLogin } from './user.interface';
+import { RegisterUserArgs, UserLogin, UserWithoutPasswordSchmas } from './user.interface';
 import { registerUserDto, loginUserDto } from './user.dto';
 import * as userService from './user.service';
 import { ApolloError } from 'apollo-server';
 import * as yup from 'yup';
-import { User } from '@prisma/client';
+import { Context } from '../../middleware/interface';
 
 const TOKEN_EXPIRATION = parseInt(process.env.TOKEN_EXPIRATION || "24");
+const REFRESH_TOKEN_EXPIRATION = parseInt(process.env.REFRESH_TOKEN_EXPIRATION || "720");
+
 
 export const register = async (_: any, data: RegisterUserArgs) => {
   try {
@@ -31,8 +33,25 @@ export const login = async (_: any, data: UserLogin) => {
   try {
     await loginUserDto.validate(data, { abortEarly: false });
     const userDetails  = await validateUser(data);
-    const accessToken = generateJWTToken(userDetails, TOKEN_EXPIRATION);
-    return {accessToken, user:{id:userDetails.id}};
+    const accessToken = generateAccessToken(userDetails);
+    const refershToken = generateRefreshToken(userDetails);
+    return {accessToken,refershToken, user:{id:userDetails.id}};
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      throw new ApolloError(error.errors.join(', '));
+    }
+    throw error;
+  }
+};
+
+export const createAccessToken = async (_: any,{}, context: Context) => {
+  try {
+    const userToken = await userService.findUserRefershToken(context.user.user.id, context.token || "");
+    if (!userToken) {
+      throw new ApolloError('You are not authorized to perform the operation');
+    }
+    const accessToken = await generateAccessToken(context.user.user);
+    return {accessToken};
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
@@ -78,7 +97,7 @@ async function validateUser(userData: UserLogin) {
  * @returns {Promise<string>} - The generated token.
  * @auther Ritik Parikh <ritikparikh98@gmail.com
  */
-function generateJWTToken(user: Partial<User>, tokenExpirationTime: number): string {
+function generateJWTToken(user: UserWithoutPasswordSchmas, tokenExpirationTime: number): string {
   try {
     const token = jwt.sign({ user }, process.env.JWT_SECRET || "" , {
       expiresIn:  tokenExpirationTime * 60 * 60
@@ -88,3 +107,34 @@ function generateJWTToken(user: Partial<User>, tokenExpirationTime: number): str
     throw error;
   }
 }
+
+  /**
+   * Generate an access token for the user.
+   *
+   * @async
+   * @public
+   * @param {} user - The user object.
+   * @returns {Promise<string>} - The generated access token.
+   * @auther Ritik Parikh <ritikparikh98@gmail..com>
+   */
+  async function generateAccessToken(user : UserWithoutPasswordSchmas) {
+    const accessToken = generateJWTToken(user, TOKEN_EXPIRATION);
+    return accessToken;
+}
+
+  /**
+   * Generate a refresh token for the user.
+   *
+   * @async
+   * !Note : send a refresh token in the `header` field
+   *
+   * @param {Partial<SUser>} user - The user object.
+   * @returns {Promise<string>} - The generated refresh token.
+   * @auther Ritik Parikh <ritikparikh@appcin.com>
+   * @note When we pass remenber me the refresh token time will be more from defasult time
+  */
+  function generateRefreshToken(user : UserWithoutPasswordSchmas) {
+      const refreshToken = generateJWTToken(user, REFRESH_TOKEN_EXPIRATION);
+      userService.saveUserRefreshToken(user.id, refreshToken);
+      return refreshToken;
+  }
