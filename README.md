@@ -36,6 +36,10 @@ Follow these steps to set up and run the project locally:
 
     This will start the Apollo Server at http://localhost:4000 Default Port:4000
 
+5. For the run test cases:
+    ```bash
+        npm run test
+    ```
 # Technologies Used
 TypeScript
 Node.js
@@ -56,7 +60,7 @@ Jest
    - ```bash
         query {
             healthCheck
-        }```
+        }
 
 2. Get Books
    - Description: Fetch a list of books.
@@ -71,7 +75,7 @@ Jest
                 author
                 publishedYear
             }
-        }```
+        }
 
 3. Get Book by ID
    - Description: Fetch details of a specific book.
@@ -86,7 +90,7 @@ Jest
                 author
                 publishedYear
             }
-        }```
+        }
 
 ## Mutations
 
@@ -100,7 +104,7 @@ Jest
             createAccessToken {
                 accessToken
             }
-        }``` 
+        }
 
 -- Remaining pleaee refer the schema file we are adding more query or muation in some time. location--> src/schema/schema.ts
 
