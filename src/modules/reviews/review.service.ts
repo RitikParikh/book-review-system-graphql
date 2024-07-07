@@ -25,9 +25,12 @@ export const fetchMyReviews = async (userId:number) : Promise<Review[]> => {
     }
 };
 
-export const fetchBookReviews = async (bookId: number) => {
+export const fetchBookReviews = async (bookId: number, query : { page : number | undefined, rowsPerPage : number | undefined, search : string | undefined }) => {
     try {
-        return await prisma.review.findMany({ where :{ bookId }});
+        const rowsPerPage = Number(query.rowsPerPage) || 0, page = query.page || 0;
+        const limit: number = (rowsPerPage != 0) ? rowsPerPage : 0;
+
+        return await prisma.review.findMany({ where :{ bookId }, take: limit,skip:  page * rowsPerPage,});
     } catch (error) {
         throw error;
     }

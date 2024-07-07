@@ -29,9 +29,9 @@ export const getMyReviews = async (_: any,{}, context: Context) => {
   }
 };
 
-export const getReviews = async (_: any, data: {bookId: number}) => {
+export const getReviews = async (_: any, data: {bookId: number, query  :{ page : number | undefined, rowsPerPage : number | undefined, search : string | undefined }}) => {
   try {
-    return await reviewService.fetchBookReviews(data?.bookId);
+    return await reviewService.fetchBookReviews(data?.bookId, data?.query);
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));

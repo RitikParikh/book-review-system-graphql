@@ -4,9 +4,9 @@ const typeDefs = gql`
 
   type Query {
     healthCheck: String
-    getBooks: [Book]
+    getBooks(query : PaginationQuery): [Book]
     getBook(id: Int!): Book
-    getReviews(bookId: Int!): [Review]
+    getReviews(bookId: Int!, query : PaginationQuery): [Review]
     getMyReviews: [MyReview] @auth
   }
 
@@ -85,6 +85,12 @@ const typeDefs = gql`
 
   type AccessTokenPayload {
     accessToken: String!
+  }
+
+  input PaginationQuery {
+    page: Int
+    rowsPerPage: Int
+    search: String
   }
 `;
 
