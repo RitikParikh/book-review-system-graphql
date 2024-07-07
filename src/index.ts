@@ -1,26 +1,35 @@
-import * as dotenv from 'dotenv';
-import { ApolloServer, AuthenticationError } from 'apollo-server';
-import typeDefs from './schema/schema';
-import resolvers from './resolvers';
-import prisma from './connection';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { authDirectiveTransformer } from './directives/authDirective';
+// index.ts
+
+// Importing necessary modules and configurations
+import * as dotenv from 'dotenv'; // Load environment variables from a .env file
+import { ApolloServer, AuthenticationError } from 'apollo-server'; // Import Apollo Server and AuthenticationError for handling GraphQL server and authentication errors
+import typeDefs from './schema/schema'; // Import GraphQL type definitions
+import resolvers from './resolvers'; // Import GraphQL resolvers
+import prisma from './connection'; // Import Prisma client for database connection
+import { makeExecutableSchema } from '@graphql-tools/schema'; // Utility to make an executable GraphQL schema
+import { authDirectiveTransformer } from './directives/authDirective'; // Import custom directive transformer for authentication
+
+// Load environment variables
 dotenv.config();
 
+// Create an executable schema with type definitions and resolvers
 let schema = makeExecutableSchema({ 
   typeDefs, 
-  resolvers
+  resolvers 
 });
+
+// Apply custom authentication directive to the schema
 schema = authDirectiveTransformer(schema, 'auth');
 
+// Initialize Apollo Server with the executable schema
 const server = new ApolloServer({
-  // typeDefs,
-  // resolvers,
   schema,
+  // Set up context for each request, providing access to the request object and Prisma client
   context: async ({ req }) => {
     const context = { req, prisma };
     return context;
   },
+  // Custom error formatting to handle AuthenticationError separately
   formatError: (error) => {
     if (error.originalError instanceof AuthenticationError) {
       return new AuthenticationError(error.message);
@@ -29,6 +38,7 @@ const server = new ApolloServer({
   },
 });
 
+// Start the Apollo Server and listen on the specified port
 server.listen({ port: process.env.PORT }).then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
 });

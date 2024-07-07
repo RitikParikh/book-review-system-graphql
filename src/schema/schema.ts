@@ -1,12 +1,15 @@
+// Import gql function from Apollo Server for defining GraphQL schema
 import { gql } from 'apollo-server';
+
+// Define GraphQL type definitions using gql template literal
 const typeDefs = gql`
-  directive @auth on FIELD_DEFINITION
+  directive @auth on FIELD_DEFINITION  
 
   type Query {
-    healthCheck: String
+    healthCheck: String  
     getBooks(query : PaginationQuery): [Book]
-    getBook(id: Int!): Book
-    getReviews(bookId: Int!, query : PaginationQuery): [Review]
+    getBook(id: Int!): Book  
+    getReviews(bookId: Int!, query : GetReviewsPaginationQuery): [Review]
     getMyReviews: [MyReview] @auth
   }
 
@@ -91,6 +94,11 @@ const typeDefs = gql`
     page: Int
     rowsPerPage: Int
     search: String
+  }
+
+  input GetReviewsPaginationQuery {
+    page: Int
+    rowsPerPage: Int
   }
 `;
 
