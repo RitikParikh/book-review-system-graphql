@@ -50,10 +50,10 @@ export const register = async (_: any, data: RegisterUserArgs): Promise<UserWith
  *
  * @param _ - The parent object (not used in this case).
  * @param data - Login data containing email and password.
- * @returns {Promise<{ accessToken: string, refreshToken: string, user: { id: number } }>} - Object containing tokens and user ID.
+ * @returns {Promise<{ accessToken: string, refreshToken: string}>} - Object containing tokens and user ID.
  * @throws {ApolloError} If login data validation fails or if the credentials are incorrect.
  */
-export const login = async (_: any, data: UserLogin): Promise<{ accessToken: string, refreshToken: string, user: { id: number } }> => {
+export const login = async (_: any, data: UserLogin) => {
   try {
     await loginUserDto.validate(data, { abortEarly: false });
 
@@ -62,10 +62,9 @@ export const login = async (_: any, data: UserLogin): Promise<{ accessToken: str
 
     // Generate JWT tokens (access token and refresh token)
     const accessToken = generateAccessToken(userDetails);
-    const refreshToken = generateRefreshToken(userDetails);
-
+    const refreshToken = await generateRefreshToken(userDetails);
     // Return tokens and basic user information
-    return { accessToken, refreshToken, user: { id: userDetails.id } };
+    return { accessToken, refreshToken };
   } catch (error) {
     // Handle validation errors or authentication errors
     if (error instanceof yup.ValidationError) {
@@ -87,7 +86,7 @@ export const login = async (_: any, data: UserLogin): Promise<{ accessToken: str
 export const createAccessToken = async (_: any, {}, context: Context): Promise<{ accessToken: string }> => {
   try {
     // Find the user's refresh token from the database using user ID and token
-    const userToken = await userService.findUserRefershToken(context.user.user.id, context.token || "");
+    const userToken = await userService.findUserRefreshToken(context.user.user.id, context.token || "");
 
     // If no valid refresh token found, throw an error
     if (!userToken) {
@@ -162,9 +161,9 @@ function generateAccessToken(user: UserWithoutPasswordSchmas): string {
  * @param user - User information without password.
  * @returns {string} - Generated refresh token.
  */
-function generateRefreshToken(user: UserWithoutPasswordSchmas): string {
+async function generateRefreshToken(user: UserWithoutPasswordSchmas): Promise<string> {
   const refreshToken = generateJWTToken(user, REFRESH_TOKEN_EXPIRATION);
-  userService.saveUserRefreshToken(user.id, refreshToken); // Save refresh token in the database
+    await userService.saveUserRefreshToken(user.id, refreshToken); // Save refresh token in the database
   return refreshToken;
 }
 

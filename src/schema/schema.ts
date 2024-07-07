@@ -83,7 +83,7 @@ const typeDefs = gql`
 
   type AuthPayload {
     accessToken: String!
-    refershToken: String!
+    refreshToken: String!
   }
 
   type AccessTokenPayload {

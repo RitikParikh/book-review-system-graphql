@@ -84,13 +84,14 @@ describe('User Resolvers', () => {
         source: mutation,
       });
 
-      expect(result.errors?.[0].message).toBe('This email already exist');
+      expect(result.errors?.[0].message).toBe('This email already exists');
     });
   });
 
   describe('login', () => {
     it('should login successfully', async () => {
       jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(mockUser);
+      jest.spyOn(userService, 'saveUserRefreshToken').mockResolvedValue();
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never); // Add 'as never' to satisfy TypeScript
       jest.spyOn(jwt, 'sign').mockImplementation(() => 'testToken');
 
@@ -98,7 +99,7 @@ describe('User Resolvers', () => {
         mutation {
           login(email: "test@example.com", password: "password123") {
             accessToken
-            refershToken
+            refreshToken
           }
         }
       `;
@@ -107,10 +108,9 @@ describe('User Resolvers', () => {
         schema: schema as GraphQLSchema,
         source: mutation,
       });
-
       expect(result.data?.login).toEqual({
         accessToken: 'testToken',
-        refershToken: 'testToken',
+        refreshToken: 'testToken'
       });
     });
 
@@ -122,7 +122,7 @@ describe('User Resolvers', () => {
         mutation {
           login(email: "test@example.com", password: "wrongpassword") {
             accessToken
-            refershToken
+            refreshToken
           }
         }
       `;
@@ -138,14 +138,14 @@ describe('User Resolvers', () => {
 
   describe('createAccessToken', () => {
     it('should create a new access token successfully', async () => {
-        let mockFindUserRefershToken = {
+        let mockFindUserRefreshToken = {
             id: 1,
             userId: 1,
             refreshToken: 'hashedpassword',
             createdAt: new Date(),
             updatedAt: new Date(),
           }
-      jest.spyOn(userService, 'findUserRefershToken').mockResolvedValue(mockFindUserRefershToken);
+      jest.spyOn(userService, 'findUserRefreshToken').mockResolvedValue(mockFindUserRefreshToken);
       jest.spyOn(jwt, 'sign').mockImplementation(() => 'newAccessToken');
 
       const mutation = `
@@ -177,7 +177,7 @@ describe('User Resolvers', () => {
     });
 
     it('should throw an error for missing refresh token', async () => {
-      jest.spyOn(userService, 'findUserRefershToken').mockResolvedValue(null);
+      jest.spyOn(userService, 'findUserRefreshToken').mockResolvedValue(null);
 
       const mutation = `
         mutation {
@@ -202,7 +202,7 @@ describe('User Resolvers', () => {
         contextValue: context,
       });
 
-      expect(result.errors?.[0].message).toBe('You are not authorized to perform the operation');
+      expect(result.errors?.[0].message).toBe('You are not authorized to perform this operation');
     });
   });
 });

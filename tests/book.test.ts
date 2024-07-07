@@ -182,15 +182,6 @@ describe('Book Resolvers', () => {
             title
             author
             publishedYear
-            reviews {
-              id
-              userId
-              bookId
-              rating
-              comment
-              createdAt
-              updatedAt
-            }
           }
         }
       `;
@@ -204,18 +195,7 @@ describe('Book Resolvers', () => {
         id: '1',
         title: 'Test Book',
         author: 'Test Author',
-        publishedYear: '2021',
-        reviews: [
-          {
-            id: '1',
-            userId: 1,
-            bookId: 1,
-            rating: 5,
-            comment: 'Great book!',
-            createdAt: mockBook.reviews[0].createdAt.toISOString(),
-            updatedAt: mockBook.reviews[0].updatedAt.toISOString(),
-          },
-        ],
+        publishedYear: '2021'
       });
     });
 

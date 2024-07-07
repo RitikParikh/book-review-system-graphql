@@ -74,7 +74,7 @@ export const saveUserRefreshToken = async (userId: number, refreshToken: string)
  * @throws {Error} - Any database error encountered during the operation.
  * @auther Ritik Parikh <ritikparikh98@gmail.com>
  */
-export const findUserRefershToken = async (userId: number, refreshToken: string)=> {
+export const findUserRefreshToken = async (userId: number, refreshToken: string)=> {
     return await prisma.userToken.findFirst({
         where: { refreshToken, userId: userId }
     });
