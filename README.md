@@ -2,7 +2,7 @@
 
 This is a Book Review System built with TypeScript, Node.js, GraphQL, Apollo Server, Prisma, and PostgreSQL. The project also includes code documentation, and test cases using Jest.
 
-## Table Contents
+## Table contents
 
 1. Project Setup
 2. Technologies Used
