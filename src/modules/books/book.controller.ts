@@ -22,6 +22,7 @@ export const addBook = async (_: any, data: IAddBook, context: Context): Promise
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Book controller addBook function",error);
     throw error;
   }
 };
@@ -41,6 +42,7 @@ export const getBooks = async (_: any, data: { query: { page: number, rowsPerPag
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Book controller getBooks function",error);
     throw error;
   }
 };
@@ -62,6 +64,7 @@ export const getBook = async (_: any, data: { id: number }): Promise<any> => {
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Book controller getBook function",error);
     throw error;
   }
 };

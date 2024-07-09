@@ -2,7 +2,7 @@
 
 // Importing necessary modules and configurations
 import * as dotenv from 'dotenv'; // Load environment variables from a .env file
-import { ApolloServer, AuthenticationError } from 'apollo-server'; // Import Apollo Server and AuthenticationError for handling GraphQL server and authentication errors
+import { ApolloServer, AuthenticationError, UserInputError, ApolloError  } from 'apollo-server'; // Import Apollo Server and AuthenticationError for handling GraphQL server and authentication errors
 import typeDefs from './schema/schema'; // Import GraphQL type definitions
 import resolvers from './resolvers'; // Import GraphQL resolvers
 import prisma from './connection'; // Import Prisma client for database connection
@@ -34,7 +34,11 @@ const server = new ApolloServer({
     if (error.originalError instanceof AuthenticationError) {
       return new AuthenticationError(error.message);
     }
-    return error;
+    if (error.originalError instanceof UserInputError) {
+      return new UserInputError(error.message);
+    }
+    // Default error handler
+    return new ApolloError('Internal server error', 'INTERNAL_SERVER_ERROR');
   },
 });
 

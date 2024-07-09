@@ -15,6 +15,7 @@ export const createReview = async (data: IReview, userId: number): Promise<Revie
         data = {...data, userId: userId};
         return await prisma.review.create({ data });
     } catch (error) {
+        console.error("Review Service createReview function",error);
         throw error;
     }
 };
@@ -35,6 +36,7 @@ export const fetchMyReviews = async (userId: number): Promise<Review[]> => {
             },
         });
     } catch (error) {
+        console.error("Review Service fetchMyReviews function",error);
         throw error;
     }
 };
@@ -54,6 +56,7 @@ export const fetchBookReviews = async (bookId: number, query: { page: number, ro
 
         return await prisma.review.findMany({ where: { bookId }, take: limit, skip: page * rowsPerPage });
     } catch (error) {
+        console.error("Review Service fetchBookReviews function",error);
         throw error;
     }
 };
@@ -76,6 +79,7 @@ export const updateMyReview = async (data: { reviewId: number, rating: number, c
             },
         });
     } catch (error) {
+        console.error("Review Service updateMyReview function",error);
         throw error;
     }
 };
@@ -92,6 +96,7 @@ export const deleteMyReview = async (reviewId: number, userId: number): Promise<
     try {
         return await prisma.review.delete({ where: { id: reviewId, userId } });
     } catch (error) {
+        console.error("Review Service deleteMyReview function",error);
         throw error;
     }
 };

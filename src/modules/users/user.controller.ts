@@ -41,6 +41,7 @@ export const register = async (_: any, data: RegisterUserArgs): Promise<UserWith
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("User controller register function",error);
     throw error;
   }
 };
@@ -70,6 +71,7 @@ export const login = async (_: any, data: UserLogin) => {
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("User controller login function",error);
     throw error;
   }
 };
@@ -101,6 +103,7 @@ export const createAccessToken = async (_: any, {}, context: Context): Promise<{
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("User controller createAccessToken function",error);
     throw error;
   }
 };
@@ -138,6 +141,7 @@ async function validateUser(userData: UserLogin): Promise<UserWithoutPasswordSch
     const { password, ...userWithoutPass } = userInfo;
     return userWithoutPass;
   } catch (error) {
+    console.error("User controller validateUser function",error);
     throw error;
   }
 }
@@ -151,7 +155,12 @@ async function validateUser(userData: UserLogin): Promise<UserWithoutPasswordSch
  * @returns {string} - Generated JWT token.
  */
 function generateAccessToken(user: UserWithoutPasswordSchmas): string {
-  return generateJWTToken(user, TOKEN_EXPIRATION);
+  try {
+    return generateJWTToken(user, TOKEN_EXPIRATION);
+  } catch (error) {
+    console.error("User controller generateAccessToken function",error);
+    throw error;
+  }
 }
 
 /**
@@ -162,9 +171,14 @@ function generateAccessToken(user: UserWithoutPasswordSchmas): string {
  * @returns {string} - Generated refresh token.
  */
 async function generateRefreshToken(user: UserWithoutPasswordSchmas): Promise<string> {
-  const refreshToken = generateJWTToken(user, REFRESH_TOKEN_EXPIRATION);
+  try {
+    const refreshToken = generateJWTToken(user, REFRESH_TOKEN_EXPIRATION);
     await userService.saveUserRefreshToken(user.id, refreshToken); // Save refresh token in the database
-  return refreshToken;
+    return refreshToken;
+  } catch (error) {
+    console.error("User controller generateRefreshToken function",error);
+    throw error;
+  }
 }
 
 /**
@@ -183,6 +197,7 @@ function generateJWTToken(user: UserWithoutPasswordSchmas, tokenExpirationTime: 
     });
     return token;
   } catch (error) {
+    console.error("User controller generateJWTToken function",error);
     throw error;
   }
 }
