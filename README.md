@@ -2,7 +2,7 @@
 
 This is a Book Review System built with TypeScript, Node.js, GraphQL, Apollo Server, Prisma, and PostgreSQL. The project also includes code documentation, and test cases using Jest.
 
-## Project Setup
+## Table Contents
 
 1. Project Setup
 2. Technologies Used
@@ -24,7 +24,8 @@ Follow these steps to set up and run the project locally:
     npm install
 
 3. Set up the database:
-    Ensure you have PostgreSQL installed and running. Configure your database credentials in the .env file that you can made from env.sample. Then, apply migrations using Prisma:
+    Ensure you have PostgreSQL installed and running. 
+    Configure your database credentials in the .env file that you can made from env.sample. Then, apply migrations using Prisma:
 
     ```bash
     npx prisma migrate dev
@@ -48,6 +49,13 @@ Apollo Server
 Prisma
 PostgreSQL
 Jest
+
+# Authentication
+
+Authentication is handled using JWT (JSON Web Tokens). To access authenticated routes or perform mutations requiring authentication, include the access token in the Authorization header:
+```bash
+ Authorization: Bearer <Token>
+```
 
 # API Documentation
 
@@ -92,9 +100,74 @@ Jest
             }
         }
 
+4. Get Reviews By Book Id
+   - Description: Fetch details of a specific book all the reviews.
+   - Endpoint: /graphql
+   - Usage: POST
+   -Authentication: Not required
+   - ```bash
+        query {
+            getReviews(bookId: 1, query: {page: 1, rowsPerPage: 10}) {
+                id
+                userId
+                bookId
+                rating
+                comment
+            }
+        }
+
+5. Get Logdin User Reviews
+   - Description: Fetch details of a logdin user given reviews
+   - Endpoint: /graphql
+   - Usage: POST
+   -Authentication: required
+   - ```bash
+        query {
+            getMyReviews {
+                id
+                userId
+                bookId
+                rating
+                comment
+                book{
+                    id
+                    title
+                    author
+                    publishedYear
+                }
+            }
+        }
+
 ## Mutations
 
-1. Create Access Token
+1. Register user
+   - Description: SignUp the user to our system
+   - Endpoint: /graphql
+   - Usage: POST
+   - Authentication: Not Required
+   - ```bash
+        mutation {
+            register(username: "ritik", email: "test@gmail.com", password: '12345678') {
+                id
+                email
+                username
+            }
+        }
+
+2. User Login
+   - Description: SignIn the user to our system using email and password
+   - Endpoint: /graphql
+   - Usage: POST
+   - Authentication: Not Required
+   - ```bash
+        mutation {
+            login(email: "test@gmail.com", password: '12345678') {
+                accessToken
+                refreshToken
+            }
+        }
+
+3. Create Access Token
    - Description: This is use for when accesToken exipy then without login using refersh token make new access token from it
    - Endpoint: /graphql
    - Usage: POST
@@ -104,16 +177,71 @@ Jest
             createAccessToken {
                 accessToken
             }
-        }
+        } 
 
--- Remaining pleaee refer the schema file we are adding more query or muation in some time. location--> src/schema/schema.ts
+4. Add Book
+   - Description: Add a Book into the system
+   - Endpoint: /graphql
+   - Usage: POST
+   - Authentication: Required (Authorization: Bearer <Token>)
+   - ```bash
+        mutation {
+            addBook(title:"GOT", author:"RR Martin", publishedYear:"2024") {
+                id
+                title
+                author
+                publishedYear
+            }
+        } 
 
-# Authentication
+5. Add Review
+   - Description: Add a Review to a Book
+   - Endpoint: /graphql
+   - Usage: POST
+   - Authentication: Required (Authorization: Bearer <Token>)
+   - ```bash
+        mutation {
+            addReview(bookId:1, rating:3, comment:"Good Book") {
+                 id
+                userId
+                bookId
+                rating
+                comment
+            }
+        } 
+    
+6. Update Review
+   - Description: Update own Review for a book
+   - Endpoint: /graphql
+   - Usage: POST
+   - Authentication: Required (Authorization: Bearer <Token>)
+   - ```bash
+        mutation {
+            updateReview(reviewId:1, rating:3, comment:"Good Book") {
+                 id
+                userId
+                bookId
+                rating
+                comment
+            }
+        } 
 
-Authentication is handled using JWT (JSON Web Tokens). To access authenticated routes or perform mutations requiring authentication, include the access token in the Authorization header:
-```bash
- Authorization: Bearer <Token>
-```
+7. Delete Review
+   - Description: Delete own Review for a book
+   - Endpoint: /graphql
+   - Usage: POST
+   - Authentication: Required (Authorization: Bearer <Token>)
+   - ```bash
+        mutation {
+            deleteReview(reviewId:1) {
+                 id
+                userId
+                bookId
+                rating
+                comment
+            }
+        } 
+
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
