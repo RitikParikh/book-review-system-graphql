@@ -14,6 +14,7 @@ export const createUser = async (data: RegisterUserArgs): Promise<User> => {
         const newUser = await prisma.user.create({ data });
         return newUser;
     } catch (error) {
+        console.error("user Service createUser function",error);
         throw error;
     }
 };
@@ -29,6 +30,7 @@ export const findUserByEmail = async (email: string): Promise<User | null> => {
     try {
         return await prisma.user.findUnique({ where: { email } });
     } catch (error) {
+        console.error("user Service findUserByEmail function",error);
         throw error;
     }
 };
@@ -44,6 +46,7 @@ export const findUserByEmailWithoutPassword = async (email: string) => {
     try {
         return await prisma.user.findUnique({ omit: { password: true }, where: { email } });
     } catch (error) {
+        console.error("user Service findUserByEmailWithoutPassword function",error);
         throw error;
     }
 };
@@ -61,6 +64,7 @@ export const saveUserRefreshToken = async (userId: number, refreshToken: string)
     try {
         await prisma.userToken.create({ data: { userId, refreshToken } });
     } catch (error) {
+        console.error("user Service saveUserRefreshToken function",error);
         throw error;
     }
 };
@@ -75,7 +79,12 @@ export const saveUserRefreshToken = async (userId: number, refreshToken: string)
  * @auther Ritik Parikh <ritikparikh98@gmail.com>
  */
 export const findUserRefreshToken = async (userId: number, refreshToken: string)=> {
-    return await prisma.userToken.findFirst({
-        where: { refreshToken, userId: userId }
-    });
+    try {
+        return await prisma.userToken.findFirst({
+            where: { refreshToken, userId: userId }
+        });
+    } catch (error) {
+        console.error("user Service findUserRefreshToken function",error);
+        throw error;
+    }
 };

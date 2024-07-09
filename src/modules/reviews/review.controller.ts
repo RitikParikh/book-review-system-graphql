@@ -22,6 +22,7 @@ export const addReview = async (_: any, data: IReview, context: Context): Promis
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Review controller addReview function",error);
     throw error;
   }
 };
@@ -42,25 +43,27 @@ export const getMyReviews = async (_: any, {}: {}, context: Context): Promise<an
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Review controller getMyReviews function",error);
     throw error;
   }
 };
 
 /**
- * Controller function to fetch reviews for a specific book.
+ * Controller function to fetch reviews for a specific Review.
  *
  * @param {any} _ - The parent resolver's result.
- * @param {{ bookId: number, query: { page: number, rowsPerPage: number }}} data - The ID of the book and optional pagination/search parameters.
- * @returns {Promise<any>} - An array of reviews for the specified book.
+ * @param {{ ReviewId: number, query: { page: number, rowsPerPage: number }}} data - The ID of the Review and optional pagination/search parameters.
+ * @returns {Promise<any>} - An array of reviews for the specified Review.
  * @throws {ApolloError} - If an error occurs during fetching reviews.
  */
-export const getReviews = async (_: any, data: { bookId: number, query: { page: number, rowsPerPage: number} }): Promise<any> => {
+export const getReviews = async (_: any, data: { ReviewId: number, query: { page: number, rowsPerPage: number} }): Promise<any> => {
   try {
-    return await reviewService.fetchBookReviews(data?.bookId, data?.query);
+    return await reviewService.fetchBookReviews(data?.ReviewId, data?.query);
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Review controller getReviews function",error);
     throw error;
   }
 };
@@ -81,6 +84,7 @@ export const updateReview = async (_: any, data: { reviewId: number, rating: num
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Review controller updateReview function",error);
     throw error;
   }
 };
@@ -101,6 +105,7 @@ export const deleteReview = async (_: any, data: { reviewId: number }, context: 
     if (error instanceof yup.ValidationError) {
       throw new ApolloError(error.errors.join(', '));
     }
+    console.error("Review controller deleteReview function",error);
     throw error;
   }
 };

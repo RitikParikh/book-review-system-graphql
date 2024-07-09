@@ -13,6 +13,7 @@ export const createBook = async (data: IAddBook): Promise<Book> => {
     try {
         return await prisma.book.create({ data });
     } catch (error) {
+        console.error("Book Service createBook function",error);
         throw error;
     }
 };
@@ -45,6 +46,7 @@ export const fetchAllBook = async (query: { page: number | undefined, rowsPerPag
             where,
         });
     } catch (error) {
+        console.error("Book Service fetchAllBook function",error);
         throw error;
     }
 };
@@ -65,6 +67,7 @@ export const fetchBookById = async (bookId: number): Promise<Book | null> => {
             }
         });
     } catch (error) {
+        console.error("Book Service fetchBookById function",error);
         throw error;
     }
 };
